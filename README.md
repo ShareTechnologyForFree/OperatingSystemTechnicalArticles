@@ -19,13 +19,14 @@
 
 
 
-# 一、进程、线程、任务、调度
+# 一、进程、线程/任务、调度
 
 通用分析：
 
 Liteos_a内核实现分析：
 
 * 1、 [进程及Liteos_a内核进程分析.md](docs/进程及Liteos_a内核进程分析.md) 
+* 2、 [线程及Liteos_a内核线程分析.md](docs/线程及Liteos_a内核线程分析.md) 
 
 Linux内核实现分析：
 
