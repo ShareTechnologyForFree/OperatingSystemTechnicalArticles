@@ -671,7 +671,7 @@ wake_up_new_task
 
 唤醒进程时，其虚拟运行时间的设置原理：
 
-<img src="./assets/image-20250802143939560.png" alt="image-20250802143939560" style="zoom:50%;" />
+<img src="./assets/image-20250802143939560.png" alt="image-20250802143939560" style="zoom: 67%;" />
 
 
 

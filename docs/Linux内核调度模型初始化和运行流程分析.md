@@ -685,13 +685,13 @@ struct task_struct {
 
 转换关系图：系统使用任务调度将Task放在各个状态之间进行切换。
 
-![image-20250730131014027](./assets/image-20250730131014027-1753852215723-3.png)
+<img src="./assets/image-20250730131014027-1753852215723-3.png" alt="image-20250730131014027" style="zoom: 67%;" />
 
 
 
 ### 2.1.4、调度标志 TIF_NEED_RESCHED
 
-linu内核中是否需要调度的标志设置在task_struct ==> thread_info ==> flags中：
+linux内核中是否需要调度的标志设置在task_struct ==> thread_info ==> flags中：
 
 ```c
 #define TIF_NEED_RESCHED	1	/* rescheduling necessary */

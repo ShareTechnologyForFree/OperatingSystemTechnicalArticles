@@ -34,7 +34,7 @@
 
 流程图为：
 
-![image-20250806202511560](./assets/image-20250806202511560.png)
+<img src="./assets/image-20250806202511560.png" alt="image-20250806202511560" style="zoom:25%;" />
 
 
 
@@ -161,19 +161,19 @@ fork									|		pthread_create
 
 ### 2.3.1、进程链接图
 
-![image-20250727193058688](./assets/image-20250727193058688.png)
+<img src="./assets/image-20250727193058688.png" alt="image-20250727193058688" style="zoom:25%;" />
 
 
 
 ### 2.3.2、线程链接图
 
-![image-20250727202112296](./assets/image-20250727202112296.png)
+<img src="./assets/image-20250727202112296.png" alt="image-20250727202112296" style="zoom:20%;" />
 
 
 
 ### 2.3.3、进程线程组合链接图
 
-![image-20250727202257208](./assets/image-20250727202257208.png)
+<img src="./assets/image-20250727202257208.png" alt="image-20250727202257208" style="zoom:20%;" />
 
 
 
