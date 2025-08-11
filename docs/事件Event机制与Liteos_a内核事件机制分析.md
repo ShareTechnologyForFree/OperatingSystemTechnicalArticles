@@ -2,6 +2,12 @@
 
 [TOC]
 
+# 0、一句话总结
+
+​	事件机制通过维护事件标志位与等待队列，在写事件时置位并唤醒等待任务、在读事件时按与/或及清零模式与超时进行阻塞/返回，从而实现任务间无数据传递的同步与异步通知。
+
+
+
 # 1、事件的通用知识点
 
 ## 1.1、事件的概念
@@ -291,6 +297,57 @@ Example_TaskEntry write event.
 Example_Event,read event :0x1
 EventMask:1
 EventMask:0
+```
+
+
+
+### 3.3.3、示例的时序图
+
+```mermaid
+sequenceDiagram
+    participant Entry as Example_TaskEntry(低优先级)
+    participant Event as Example_Event(高优先级)
+    participant EventCB as g_exampleEvent
+    participant Scheduler as 调度器
+
+    Note over Entry: 开始执行Example_EventEntry
+    Entry->>EventCB: LOS_EventInit(&g_exampleEvent)
+    EventCB-->>Entry: 事件初始化成功
+    
+    Entry->>Scheduler: LOS_TaskCreate(Example_Event, 优先级5)
+    Scheduler-->>Entry: 任务创建成功
+    
+    Note over Scheduler: 高优先级任务Example_Event开始执行
+    Scheduler->>Event: 任务切换到Example_Event
+    
+    Event->>EventCB: LOS_EventRead(EVENT_WAIT=0x1, 超时500ticks)
+    Note over Event: 等待事件0x1，进入阻塞状态
+    EventCB-->>Event: 阻塞等待
+    
+    Note over Scheduler: Example_Event阻塞，切换回Entry
+    Scheduler->>Entry: 任务切换到Example_TaskEntry
+    
+    Entry->>EventCB: LOS_EventWrite(EVENT_WAIT=0x1)
+    EventCB->>Event: 唤醒等待任务
+    EventCB-->>Entry: 写事件成功
+    
+    Note over Scheduler: 事件满足，高优先级任务被唤醒
+    Scheduler->>Event: 任务切换到Example_Event
+    
+    EventCB-->>Event: LOS_EventRead返回0x1
+    Note over Event: 读取到期望事件，任务继续执行
+    Event->>Event: 打印"read event :0x1"
+    Note over Event: Example_Event任务结束
+    
+    Note over Scheduler: Example_Event结束，切换回Entry
+    Scheduler->>Entry: 任务切换到Example_TaskEntry
+    
+    Entry->>EventCB: 打印EventMask值(1)
+    Entry->>EventCB: LOS_EventClear(清除事件标志)
+    EventCB-->>Entry: 事件标志清除成功
+    Entry->>EventCB: 打印EventMask值(0)
+    
+    Note over Entry: Example_TaskEntry任务结束
 ```
 
 
