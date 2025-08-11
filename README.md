@@ -23,13 +23,13 @@
 
 通用分析：
 
-Liteos_a内核实现分析：
+Liteos_a 内核实现分析：
 
 * 1、 [进程及Liteos_a内核进程分析.md](docs/进程及Liteos_a内核进程分析.md) 
 * 2、 [线程及Liteos_a内核线程分析.md](docs/线程及Liteos_a内核线程分析.md) 
 * 3、 [调度及Liteos_a内核调度分析.md](docs/调度及Liteos_a内核调度分析.md) 
 
-Linux内核实现分析：
+Linux 内核实现分析：
 
 * 1、[Linux内核进程线程模型及其创建流程分析.md](docs/Linux内核进程线程模型及其创建流程分析.md)
 * 2、[Linux内核调度模型初始化和运行流程分析.md](docs/Linux内核调度模型初始化和运行流程分析.md) 
@@ -37,21 +37,21 @@ Linux内核实现分析：
 
 
 
-# 二、ELF可执行文件
+# 二、ELF 可执行文件
 
 通用分析：
 
-Liteos_a内核实现分析：
+Liteos_a 内核实现分析：
 
 1、 [ELF可执行文件及Liteos_a内核加载ELF文件分析.md](docs/ELF可执行文件及Liteos_a内核加载ELF文件分析.md) 
 
 
 
-# 三、IPC进程间通信机制
+# 三、IPC 进程间通信机制
 
-1、事件Event： [事件Event机制与Liteos_a内核事件机制分析.md](docs/事件Event机制与Liteos_a内核事件机制分析.md) 
+1、事件 Event： [事件Event机制与Liteos_a内核事件机制分析.md](docs/事件Event机制与Liteos_a内核事件机制分析.md) 
 
-2、信号量：
+2、信号量 Semaphore： [信号量Semaphore机制与Liteos_a内核信号量机制分析.md](docs/信号量Semaphore机制与Liteos_a内核信号量机制分析.md) 
 
 3、互斥锁：
 
