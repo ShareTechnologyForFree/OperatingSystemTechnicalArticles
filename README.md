@@ -55,7 +55,7 @@ Liteos_a 内核实现分析：
 
 3、互斥锁 Mutex： [互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md](docs/互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md) 
 
-4、读写锁：
+4、读写锁： [读写锁RWLock机制与Liteos_a内核读写锁机制分析.md](docs/读写锁RWLock机制与Liteos_a内核读写锁机制分析.md) 
 
 5、用户态快速互斥锁：
 
