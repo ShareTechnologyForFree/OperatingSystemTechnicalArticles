@@ -43,27 +43,37 @@ Linux 内核实现分析：
 
 Liteos_a 内核实现分析：
 
-1、 [ELF可执行文件及Liteos_a内核加载ELF文件分析.md](docs/ELF可执行文件及Liteos_a内核加载ELF文件分析.md) 
+* 1、 [ELF可执行文件及Liteos_a内核加载ELF文件分析.md](docs/ELF可执行文件及Liteos_a内核加载ELF文件分析.md) 
 
 
 
 # 三、IPC 进程间通信机制
 
-1、事件 Event： [事件Event机制与Liteos_a内核事件机制分析.md](docs/事件Event机制与Liteos_a内核事件机制分析.md) 
+通用分析：
 
-2、信号量 Semaphore： [信号量Semaphore机制与Liteos_a内核信号量机制分析.md](docs/信号量Semaphore机制与Liteos_a内核信号量机制分析.md) 
+Liteos_a 内核实现分析：
 
-3、互斥锁 Mutex： [互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md](docs/互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md) 
+* 1、事件 Event： [事件Event机制与Liteos_a内核事件机制分析.md](docs/事件Event机制与Liteos_a内核事件机制分析.md) 
 
-4、读写锁RWLock： [读写锁RWLock机制与Liteos_a内核读写锁机制分析.md](docs/读写锁RWLock机制与Liteos_a内核读写锁机制分析.md) 
+* 2、信号量 Semaphore： [信号量Semaphore机制与Liteos_a内核信号量机制分析.md](docs/信号量Semaphore机制与Liteos_a内核信号量机制分析.md) 
 
-5、用户态快速互斥锁Futex： [用户态快速互斥锁Futex机制与Liteos_a内核Futex机制分析.md](docs/用户态快速互斥锁Futex机制与Liteos_a内核Futex机制分析.md) 
+* 3、互斥锁 Mutex： [互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md](docs/互斥锁Mutex机制与Liteos_a内核互斥锁机制分析.md) 
 
-6、消息队列：
+* 4、读写锁 RWLock： [读写锁RWLock机制与Liteos_a内核读写锁机制分析.md](docs/读写锁RWLock机制与Liteos_a内核读写锁机制分析.md) 
 
-7、信号：
+* 5、用户态快速互斥锁 Futex： [用户态快速互斥锁Futex机制与Liteos_a内核Futex机制分析.md](docs/用户态快速互斥锁Futex机制与Liteos_a内核Futex机制分析.md) 
 
-8、共享内存：
+* 6、消息队列 Queue： [消息队列Queue机制与Liteos_a内核消息队列机制分析.md](docs/消息队列Queue机制与Liteos_a内核消息队列机制分析.md) 
+
+* 7、信号 Signal：
+
+* 8、共享内存 ShareMemory：
+
+Linux 内核实现分析：
+
+* 1、用户态快速互斥锁 Futex： [Linux内核Futex机制分析.md](docs/Linux内核Futex机制分析.md) 
+
+
 
 ```c
 # 互斥锁Mutex机制与Liteos_a内核互斥锁机制分析
@@ -92,7 +102,7 @@ Liteos_a 内核实现分析：
 
 ## 2.4、Liteos_a内核读写锁模块的总结
 
-​	分析到这里，可以看出Liteos_a内核完整的实现了 1.1 ~ 1.3 小节中读写锁所有的通用机制。接下来就借助Liteos_a内核的源代码继续分析，Liteos_a内核是如何通过代码将读写锁的这些机制一一实现的。
+分析到这里，可以看出Liteos_a内核完整的实现了 1.1 ~ 1.3 小节中读写锁所有的通用机制。接下来就借助Liteos_a内核的源代码继续分析，Liteos_a内核是如何通过代码将读写锁的这些机制一一实现的。
 
 
 
