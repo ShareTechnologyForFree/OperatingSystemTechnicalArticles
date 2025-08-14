@@ -11,6 +11,8 @@
 
 文章大致使用以下架构进行编写：
 
+* 0、一句话总结该技术。
+
 * 1、对技术的概念进行介绍。
 
 * 2、分析该技术的通用实现流程。
@@ -67,7 +69,7 @@ Liteos_a 内核实现分析：
 
 * 7、信号 Signal： [信号Signal机制与Liteos_a内核信号机制分析.md](docs/信号Signal机制与Liteos_a内核信号机制分析.md) 
 
-* 8、共享内存 ShareMemory：共享内核Shm机制与Liteos_a内核Shm机制分析
+* 8、共享内存 ShareMemory： [共享内核Shm机制与Liteos_a内核Shm机制分析.md](docs/共享内核Shm机制与Liteos_a内核Shm机制分析.md) 
 
 Linux 内核实现分析：
 
