@@ -4,7 +4,7 @@
 
 # 1、Linux内核中传统的futex流程
 
-传统的用户态态线程之间的相互唤醒和等待使用futex系统调用，主要流程如下：
+传统的用户态线程之间的相互唤醒和等待使用futex系统调用，主要流程如下：
 
 * 1、TaskA执行futex_wake系统调用唤醒TaskB，并将其加入就绪队列，之后TaskA返回用户态。
 * 2、Task接着执行futex_wait系统调用进入内核休眠等待，调度器使用pick_next_task选择下一个Task，如果调度到Task，那么之后进行update_curr更新时间（包括实际运行时间、虚拟运行时间vruntime），再进行context_switch上下文切换（包括地址空间切换、寄存器切换）。之后CPU返回TaskB的用户态运行。
