@@ -87,6 +87,9 @@ Liteos_a 内核实现分析：
 
 * 1、物理内存 Physical Memory： [物理内存与Liteos_a内核物理内存分析.md](docs/物理内存与Liteos_a内核物理内存分析.md) 
 * 2、虚拟内存 Virtual Memory： [虚拟内存与Liteos_a内核虚拟内存分析.md](docs/虚拟内存与Liteos_a内核虚拟内存分析.md) 
+  * 2.1、虚拟内存区域的红黑树RBTree管理方式： [红黑树RBTree分析.xmind](docs/红黑树RBTree分析.xmind) 
+  * 2.2、使用虚拟内存的堆内存管理算法TLSF： [堆内存与Liteos_a内核堆内存TLSF机制分析.md](docs/堆内存与Liteos_a内核堆内存TLSF机制分析.md) 
+
 * 3、虚实映射 Virtual-Physical Mapping：
 
 
