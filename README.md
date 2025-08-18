@@ -21,6 +21,13 @@
 
 
 
+文档写作工具：
+
+* markdown工具：[typora](https://typora.io/)
+* 思维导图工具：[知犀](https://www.zhixi.com/)（这个能在里面插入代码块）
+
+
+
 # 一、进程、线程/任务、调度
 
 通用分析：
@@ -100,8 +107,8 @@ Liteos_a 内核实现分析：
 
 Liteos_a 内核实现分析：
 
-* 1、中断 Interrupt： [中断机制与Liteos_a内核中断机制分析.md](docs/中断机制与Liteos_a内核中断机制分析.md) 
-* 2、异常 Exception：
+* 1、中断与异常 Interrupt and Exception： [中断异常机制与Liteos_a内核中断异常机制分析.md](docs/中断异常机制与Liteos_a内核中断异常机制分析.md) 
+* 2、中断控制器 GIC：  [中断控制器GICv2以及Liteos_a内核使用流程分析.md](docs/中断控制器GICv2以及Liteos_a内核使用流程分析.md) 
 
 
 
