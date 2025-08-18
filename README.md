@@ -100,7 +100,7 @@ Liteos_a 内核实现分析：
 
 Liteos_a 内核实现分析：
 
-* 1、中断 Interrupt：
+* 1、中断 Interrupt： [中断机制与Liteos_a内核中断机制分析.md](docs/中断机制与Liteos_a内核中断机制分析.md) 
 * 2、异常 Exception：
 
 
@@ -138,7 +138,7 @@ Liteos_a 内核实现分析：
 
 ## 2.2、Liteos_a内核的读写锁运行机制
 
-## 2.3、Liteso_a内核读写锁读写时序图
+## 2.3、Liteos_a内核读写锁读写时序图
 
 ## 2.4、Liteos_a内核读写锁模块的总结
 
