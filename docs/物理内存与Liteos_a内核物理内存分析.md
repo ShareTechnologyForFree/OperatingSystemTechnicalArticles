@@ -150,7 +150,7 @@ sequenceDiagram
 
 1、**内存碎片问题**：
 
-- **外部碎片**：空闲内存分散为小间隙，总空闲足够但无法分配连续大块（图1示例）；
+- **外部碎片**：空闲内存分散为小间隙，总空闲足够但无法分配连续大块；
 - **内部碎片**：分配单元因对齐或最小块限制导致的未利用空间（如申请500B但分配512B）。
 
 2、**分配策略对比**：
@@ -235,8 +235,8 @@ Liteos_a内核的物理内存页分配和释放流程如下：
 
 | 功能分类     | 接口描述                                                     |
 | ------------ | ------------------------------------------------------------ |
-| 申请物理内存 | - LOS_PhysPageAlloc：申请一个物理页 <br />- LOS_PhysPagesAlloc：申请物理页并挂在对应的链表上 <br />- LOS_PhysPagesAllocContiguous：申请多页地址连续的物理内存 |
-| 释放物理内存 | - LOS_PhysPageFree：释放一个物理页 <br />- LOS_PhysPagesFree：释放挂在链表上的物理页 <br />- LOS_PhysPagesFreeContiguous：释放多页地址连续的物理内存 |
+| 申请物理内存 | - LOS_PhysPageAlloc：申请一个物理页 <br />- LOS_PhysPagesAlloc：申请多页地址不连续的物理页 <br />- LOS_PhysPagesAllocContiguous：申请多页地址连续的物理内存 |
+| 释放物理内存 | - LOS_PhysPageFree：释放一个物理页 <br />- LOS_PhysPagesFree：释放多页地址不连续的物理页 <br />- LOS_PhysPagesFreeContiguous：释放多页地址连续的物理内存 |
 | 查询地址     | - LOS_VmPageGet：根据物理地址获取其对应的物理页结构体指针 <br />- LOS_PaddrToKVaddr：根据物理地址获取其对应的内核虚拟地址 |
 
 
@@ -527,7 +527,7 @@ VOID OsVmPageStartup(VOID)
 ```c
 // 创建了一个struct VmPhysSeg *seg 物理段
 // 起始地址 = 内核镜像-->g_vmPageArray数组之后
-// 大小 为外接内存总大小 - 内核镜像 - g_vmPageArray数组大小
+// 大小为 外接内存总大小 - 内核镜像 - g_vmPageArray数组大小
 STATIC INT32 OsVmPhysSegCreate(paddr_t start, size_t size)
 {
     struct VmPhysSeg *seg = NULL;
@@ -615,6 +615,8 @@ STATIC LosVmPage *OsVmPhysPagesAlloc(struct VmPhysSeg *seg, size_t nPages)
         }
     }
     // 3、阶数比默认最大阶 大
+    // 把可能的内存块进行拼接
+    // 比如 order=9 + order=8
     else {
         newOrder = VM_LIST_ORDER_MAX - 1;
         // 查找足够大的连续空闲块
@@ -847,7 +849,6 @@ VOID OsVmPhysPagesFreeContiguous(LosVmPage *page, size_t nPages)
 其中 OsVmPhysPagesFree 函数：
 
 ```c
-
 VOID OsVmPhysPagesFree(LosVmPage *page, UINT8 order)
 {
     paddr_t pa;
@@ -871,7 +872,17 @@ VOID OsVmPhysPagesFree(LosVmPage *page, UINT8 order)
             // 3) 伙伴可合并：先从空闲链表移除伙伴，提升阶数，并对齐到更高阶块基地址，继续尝试更高阶合并
             OsVmPhysFreeListDelUnsafe(buddyPage);
             order++;
+            // - pa &= ~(VM_ORDER_TO_PHYS(order) - 1) 确保物理地址对齐到更高阶块的边界
+            // - 这个对齐操作总是向下对齐，即选择地址较低的边界
             pa &= ~(VM_ORDER_TO_PHYS(order) - 1);
+            // 通过 OsVmPhysToPage(pa, page->segID) 根据对齐后的物理地址重新获取对应的LosVmPage结构体
+            // 举例说明： 假设有两个order=1的buddy页（每个2页）：
+            //      - 页A：物理地址0x1000-0x1FFF，由LosVmPage_A管理
+            //      - 页B：物理地址0x2000-0x2FFF，由LosVmPage_B管理
+            // 合并后成为order=2的块（4页）：
+            //      - 合并块：物理地址0x1000-0x2FFF
+            //      - 由LosVmPage_A管理（地址较低的那个）
+            //      - LosVmPage_B被移除，不再使用
             page = OsVmPhysToPage(pa, page->segID);
         } while (order < VM_LIST_ORDER_MAX - 1);
     }
@@ -879,7 +890,6 @@ VOID OsVmPhysPagesFree(LosVmPage *page, UINT8 order)
     // 4) 将最终（合并后或原始）的块加入对应阶的空闲链表
     OsVmPhysFreeListAddUnsafe(page, order);
 }
-
 ```
 
 其中 OsVmPhysFreeListDelUnsafe 函数：

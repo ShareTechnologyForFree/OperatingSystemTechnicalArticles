@@ -71,7 +71,7 @@ TLSF（Two-Level Segregated Fit）算法通过**两级位图索引**（快速定
 - **空闲链表（Free List）**
   - 单向链表：简单但查找效率O(n)
   - 双向链表：支持快速块合并
-  - **分离空闲链表**：按块大小分级（如<32B, 32-64B, ...），提升搜索效率
+  - 分离空闲链表：按块大小分级（如<32B, 32-64B, ...），提升搜索效率
 - **位图索引（Bitmap）**
   - 用比特位标记块状态（0空闲/1占用）
   - 适用场景：固定大小块分配（如页式分配器）
@@ -80,7 +80,7 @@ TLSF（Two-Level Segregated Fit）算法通过**两级位图索引**（快速定
   - **TLSF（Two-Level Segregate Fit）**：
     - 第一级：按2^n大小分区（如128B-256B）
     - 第二级：每区间分8个子链表
-    - *优势*：O(1)分配复杂度，实时系统首选
+    - 优势：O(1)分配复杂度，实时系统首选
 
 
 
@@ -128,7 +128,7 @@ TLSF（Two-Level Segregated Fit）算法通过**两级位图索引**（快速定
 
 
 
-## 1.4、堆内存的通用本质的总结
+## 1.4、堆内存的通用知识点的总结
 
 堆内存管理是**时空效率的权衡艺术**：
 
@@ -1161,3 +1161,152 @@ UINT32 allocSize = OS_MEM_ALIGN(size + OS_MEM_NODE_HEAD_SIZE, OS_MEM_ALIGN_SIZE)
 
 * 伙伴系统**：以**地址对齐性**为核心，独立元数据简化管理逻辑，依赖幂次块划分保证低外部碎片，但内部碎片代价高昂。
 
+
+
+## 5.3、这个TLSF的O(1)时间复杂度如何保证
+
+分配内存时：
+
+* 直接根据内存大小size，先使用常数时间的公式查找一级二级索引index，再取出索引index对应的空闲链表freeList，直接返回freeList的第一个节点。
+
+  ```c
+  STATIC INLINE struct OsMemNodeHead *OsMemFreeNodeGet(VOID *pool, UINT32 size)
+  {
+      struct OsMemPoolHead *poolHead = (struct OsMemPoolHead *)pool;
+      UINT32 index;
+      // 返回空闲链表第一个节点
+      struct OsMemFreeNodeHead *firstNode = OsMemFindNextSuitableBlock(pool, size, &index);
+      if (firstNode == NULL) {
+          return NULL;
+      }
+  
+      OsMemListDelete(poolHead, index, firstNode);
+  
+      return &firstNode->header;
+  }
+  
+  STATIC INLINE struct OsMemFreeNodeHead *OsMemFindNextSuitableBlock(VOID *pool, UINT32 size, UINT32 *outIndex)
+  {
+      struct OsMemPoolHead *poolHead = (struct OsMemPoolHead *)pool;
+      UINT32 fl = OsMemFlGet(size);
+      UINT32 sl;
+      UINT32 index, tmp;
+      UINT32 curIndex = OS_MEM_FREE_LIST_COUNT;
+      UINT32 mask;
+  
+      do {
+          if (size < OS_MEM_SMALL_BUCKET_MAX_SIZE) {
+              index = fl;
+          } else {
+              sl = OsMemSlGet(size, fl);
+              curIndex = ((fl - OS_MEM_LARGE_START_BUCKET) << OS_MEM_SLI) + sl + OS_MEM_SMALL_BUCKET_COUNT;
+              index = curIndex + 1;
+          }
+  
+          tmp = OsMemNotEmptyIndexGet(poolHead, index);
+          if (tmp != OS_MEM_FREE_LIST_COUNT) {
+              index = tmp;
+              goto DONE;
+          }
+  
+          for (index = LOS_Align(index + 1, 32); index < OS_MEM_FREE_LIST_COUNT; index += 32) { /* 32: align size */
+              mask = poolHead->freeListBitmap[BITMAP_INDEX(index)];
+              if (mask != 0) {
+                  index = OsMemFFS(mask) + index;
+                  goto DONE;
+              }
+          }
+      } while (0);
+  
+      if (curIndex == OS_MEM_FREE_LIST_COUNT) {
+          return NULL;
+      }
+  
+      *outIndex = curIndex;
+      return OsMemFindCurSuitableBlock(poolHead, curIndex, size);
+  DONE:
+      *outIndex = index;
+      // 直接返回第一个节点，不查找
+      return poolHead->freeList[index];
+  }
+  ```
+
+释放内存时：
+
+* 直接根据内存大小size，先使用常数时间的公式查找一级二级索引index，再取出索引index对应的空闲链表freeList，直接将还要释放的内存节点插入到freeList的第一个节点中。
+
+  ```c
+  STATIC INLINE VOID OsMemFreeNodeAdd(VOID *pool, struct OsMemFreeNodeHead *node)
+  {
+      // 获取索引index
+      UINT32 index = OsMemFreeListIndexGet(node->header.sizeAndFlag);
+      if (index >= OS_MEM_FREE_LIST_COUNT) {
+          LOS_Panic("The index of free lists is error, index = %u\n", index);
+          return;
+      }
+      // 插入
+      OsMemListAdd(pool, index, node);
+  }
+  
+  STATIC INLINE VOID OsMemListAdd(struct OsMemPoolHead *pool, UINT32 listIndex, struct OsMemFreeNodeHead *node)
+  {
+      struct OsMemFreeNodeHead *firstNode = pool->freeList[listIndex];
+      if (firstNode != NULL) {
+          firstNode->prev = node;
+      }
+      node->prev = NULL;
+      node->next = firstNode;
+      // 直接插入空闲链表的第一个节点，不排序
+      pool->freeList[listIndex] = node;
+      OsMemSetFreeListBit(pool, listIndex);
+      node->header.magic = OS_MEM_NODE_MAGIC;
+  }
+  ```
+
+
+
+## 5.4、TLSF中的内存对齐
+
+核心原理：
+
+* TLSF（Two-Level Segregated Fit）算法中，**内存对齐从元数据开始，而非仅对齐用户可用内存**。
+
+
+
+关键实现：
+
+1、基础对齐机制
+
+```c
+// 分配时对整个块（元数据+用户数据）进行对齐
+allocSize = OS_MEM_ALIGN(size + OS_MEM_NODE_HEAD_SIZE, OS_MEM_ALIGN_SIZE);
+
+// 内存块结构：元数据紧邻用户数据
+struct OsMemUsedNodeHead {
+    struct OsMemNodeHead header;  // 元数据
+};
+// 用户数据紧跟在元数据之后
+```
+
+2、特殊对齐处理
+
+`LOS_MemAllocAlign`函数处理特殊对齐需求：
+- 分配更大的内存块
+- 在块内找到满足对齐要求的地址
+- 存储偏移量（`gapSize`）用于释放时定位
+
+3、对齐的必要性
+
+1. **硬件要求**：CPU访问效率、缓存行对齐、DMA传输
+2. **算法优化**：位图索引计算、O(1)复杂度保证
+3. **内存管理**：合并/分裂操作的正确性
+4. **数据完整性**：指针操作和结构体访问的安全性
+
+4、设计优势
+
+- **统一对齐**：元数据和用户数据作为整体对齐，简化管理
+- **高效访问**：保证CPU和硬件的最优访问性能
+- **算法稳定**：维护TLSF索引计算的准确性
+- **内存连续**：元数据与数据紧邻，提高缓存局部性
+
+这种设计确保了TLSF算法在保持O(1)时间复杂度的同时，满足了系统级内存管理的所有硬件和软件要求。
