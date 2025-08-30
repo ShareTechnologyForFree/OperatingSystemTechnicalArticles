@@ -78,6 +78,7 @@
 | 虚拟内存 Virtual Memory           | [虚拟内存与Liteos_a内核虚拟内存分析.md](docs/虚拟内存与Liteos_a内核虚拟内存分析.md) |           |      |
 | 虚拟内存区域的红黑树RBTree管理    | [红黑树RBTree分析.zxm](docs/红黑树RBTree分析.zxm)            |           |      |
 | 使用虚拟内存的堆内存管理算法TLSF  | [堆内存与Liteos_a内核堆内存TLSF机制分析.md](docs/堆内存与Liteos_a内核堆内存TLSF机制分析.md) |           |      |
+| 虚拟内存管理算法SLAB              |                                                              |           |      |
 | 虚实映射 Virtual-Physical Mapping | [虚实映射机制与MMU分析.md](docs/虚实映射机制与MMU分析.md)    |           |      |
 
 
@@ -121,4 +122,6 @@
 希望补充内容？在[讨论区](https://github.com/ShareTechnologyForFree/OS-Kernel-Mechanism/discussions)提出需求。
 
 贡献代码？Fork仓库后提交PR（需遵循[贡献规范](CONTRIBUTING.md)）。
+
+
 
